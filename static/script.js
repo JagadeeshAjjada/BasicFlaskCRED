@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', fetchUsers);
 
+let editModal;
+
 function fetchUsers() {
     fetch('/get_users')
         .then(response => response.json())
@@ -14,8 +16,8 @@ function fetchUsers() {
                         <td>${user.age}</td>
                         <td>${user.dep}</td>
                         <td>
-                            <button onclick="openEditModal(${user.id}, '${user.name}', '${user.age}', '${user.dep}')">Edit</button>
-                            <button onclick="deleteUser(${user.id})">Delete</button>
+                            <button class="btn btn-warning btn-sm" onclick="openEditModal(${user.id}, '${user.name}', ${user.age}, '${user.dep}')">Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">Delete</button>
                         </td>
                     </tr>`;
                 tableBody.innerHTML += row;
@@ -25,7 +27,7 @@ function fetchUsers() {
 
 function addUser() {
     const name = document.getElementById('name').value;
-    const age = document.getElementById('age').value;
+    const age = parseInt(document.getElementById('age').value);
     const dep = document.getElementById('dep').value;
 
     fetch('/add_user', {
@@ -48,20 +50,19 @@ function openEditModal(id, name, age, dep) {
     document.getElementById('editName').value = name;
     document.getElementById('editAge').value = age;
     document.getElementById('editDep').value = dep;
-    document.getElementById('editModal').style.display = 'block';
-}
 
-function closeEditModal() {
-    document.getElementById('editModal').style.display = 'none';
+    const modal = new bootstrap.Modal(document.getElementById('editModal'));
+    modal.show();
+    editModal = modal;
 }
 
 function confirmEdit() {
     const id = document.getElementById('editUserId').value;
     const name = document.getElementById('editName').value;
-    const age = document.getElementById('editAge').value;
+    const age = parseInt(document.getElementById('editAge').value);
     const dep = document.getElementById('editDep').value;
 
-    if (confirm(`Are you sure you want to update this user to:\nName: ${name}\nAge: ${age}\nDep: ${dep}?`)) {
+    if (confirm(`Update user to:\nName: ${name}\nAge: ${age}\nDepartment: ${dep}?`)) {
         fetch(`/update_user/${id}`, {
             method: 'PUT',
             headers: {'Content-Type': 'application/json'},
@@ -70,8 +71,8 @@ function confirmEdit() {
         .then(response => response.json())
         .then(data => {
             alert(data.message);
-            closeEditModal();
             fetchUsers();
+            editModal.hide();
         });
     }
 }
