@@ -1,7 +1,9 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 # SQLite database config (database file will be created in your project folder)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydatabase.db'
@@ -32,6 +34,11 @@ def create_tables():
     if not hasattr(app, 'tables_created'):
         db.create_all()
         app.tables_created = True
+
+
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 
 # CREATE user — POST route
