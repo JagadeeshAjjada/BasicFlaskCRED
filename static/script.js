@@ -10,11 +10,11 @@ function fetchUsers() {
                 const row = `
                     <tr>
                         <td>${user.id}</td>
-                        <td contenteditable="true">${user.name}</td>
-                        <td contenteditable="true">${user.age}</td>
-                        <td contenteditable="true">${user.dep}</td>
+                        <td>${user.name}</td>
+                        <td>${user.age}</td>
+                        <td>${user.dep}</td>
                         <td>
-                            <button onclick="updateUser(${user.id}, this)">Update</button>
+                            <button onclick="openEditModal(${user.id}, '${user.name}', '${user.age}', '${user.dep}')">Edit</button>
                             <button onclick="deleteUser(${user.id})">Delete</button>
                         </td>
                     </tr>`;
@@ -37,24 +37,43 @@ function addUser() {
     .then(data => {
         alert(data.message);
         fetchUsers();
+        document.getElementById('name').value = '';
+        document.getElementById('age').value = '';
+        document.getElementById('dep').value = '';
     });
 }
 
-function updateUser(id, button) {
-    const row = button.closest('tr');
-    const name = row.children[1].innerText;
-    const email = row.children[2].innerText;
+function openEditModal(id, name, age, dep) {
+    document.getElementById('editUserId').value = id;
+    document.getElementById('editName').value = name;
+    document.getElementById('editAge').value = age;
+    document.getElementById('editDep').value = dep;
+    document.getElementById('editModal').style.display = 'block';
+}
 
-    fetch(`/update_user/${id}`, {
-        method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({name, age, dep})
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert(data.message);
-        fetchUsers();
-    });
+function closeEditModal() {
+    document.getElementById('editModal').style.display = 'none';
+}
+
+function confirmEdit() {
+    const id = document.getElementById('editUserId').value;
+    const name = document.getElementById('editName').value;
+    const age = document.getElementById('editAge').value;
+    const dep = document.getElementById('editDep').value;
+
+    if (confirm(`Are you sure you want to update this user to:\nName: ${name}\nAge: ${age}\nDep: ${dep}?`)) {
+        fetch(`/update_user/${id}`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({name, age, dep})
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            closeEditModal();
+            fetchUsers();
+        });
+    }
 }
 
 function deleteUser(id) {

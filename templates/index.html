@@ -6,7 +6,7 @@
 </head>
 <body>
     <h2>User Registration</h2>
-    <input type="text" id="name" placeholder="Enter Name">
+    <input type="text" required id="name" placeholder="Enter Name">
     <input type="text" id="age" placeholder="Enter Age">
     <input type="text" id="dep" placeholder="Enter Department">
     <button onclick="addUser()">Add User</button>
@@ -18,6 +18,17 @@
         </thead>
         <tbody></tbody>
     </table>
+
+    <!-- Edit Modal -->
+    <div id="editModal" style="display:none; position:fixed; top:30%; left:35%; padding:20px; border:1px solid #ccc; background:#f4f4f4;">
+        <h3>Edit User</h3>
+        <input type="hidden" id="editUserId">
+        <input type="text" id="editName" placeholder="New Name"><br><br>
+        <input type="text" id="editAge" placeholder="New Age"><br><br>
+        <input type="text" id="editDep" placeholder="New Department"><br><br>
+        <button onclick="confirmEdit()">Confirm Edit</button>
+        <button onclick="closeEditModal()">Cancel</button>
+    </div>
 
     <script src="/static/script.js"></script>
 </body>
