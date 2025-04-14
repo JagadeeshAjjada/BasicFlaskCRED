@@ -10,6 +10,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Initialize the database
 db = SQLAlchemy(app)
 
+
 # Create a User model (table)
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -42,8 +43,6 @@ def add_user():
     dep = data.get('dep')
     if not name or not age or not dep:
         return jsonify({'error': 'Name, dep, and age are required!'}), 400
-    # if User.query.filter_by(age=age).first():
-    #     return jsonify({'error': 'User with this email already exists!'}), 409
     new_user = User(name=name, age=age, dep=dep)
     db.session.add(new_user)
     db.session.commit()
